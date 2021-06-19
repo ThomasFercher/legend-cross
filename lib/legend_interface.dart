@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 
@@ -10,8 +11,12 @@ class LegendInterface {
     return version;
   }
 
-  static Future<String?> get pickFile async {
-    final String? version = await _channel.invokeMethod('pickFile');
-    return version;
+  static Future<Map> pickFile({List<String>? extensions}) async {
+    return await _channel.invokeMethod('pickFile', extensions);
+  }
+
+  static Future<List<Object?>> pickMultipleFiles(
+      {List<String>? extensions}) async {
+    return await _channel.invokeMethod('pickMultipleFiles', extensions);
   }
 }

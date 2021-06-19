@@ -7,6 +7,7 @@ import 'dart:html' as html show window;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:legend_interface/web/legendFilePicker.dart';
 
 /// A web implementation of the LegendInterface plugin.
 class LegendInterfaceWeb {
@@ -28,10 +29,19 @@ class LegendInterfaceWeb {
     switch (call.method) {
       case 'getPlatformVersion':
         return getPlatformVersion();
+      case 'pickFile':
+        return await LegendFilePicker.pickSingleFile(
+          extensions: call.arguments,
+        );
+      case 'pickMultipleFiles':
+        return await LegendFilePicker.pickMultipleFiles(
+          extensions: call.arguments,
+        );
       default:
         throw PlatformException(
           code: 'Unimplemented',
-          details: 'legend_interface for web doesn\'t implement \'${call.method}\'',
+          details:
+              'legend_interface for web doesn\'t implement \'${call.method}\'',
         );
     }
   }

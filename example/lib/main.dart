@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -15,7 +17,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  String _file = 'Unknown';
+  Map<dynamic, dynamic>? _file;
+  List? _files;
 
   @override
   void initState() {
@@ -47,13 +50,13 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> pickFile() async {
-    String file;
+    Map<dynamic, dynamic>? file;
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      file = await LegendInterface.pickFile ?? 'Unknown file';
+      file = await LegendInterface.pickFile();
     } on PlatformException {
-      file = 'Failed to get file.';
+      file = null;
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -63,6 +66,26 @@ class _MyAppState extends State<MyApp> {
 
     setState(() {
       _file = file;
+    });
+  }
+
+  Future<void> pickMultipleFiles() async {
+    List? files;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    // We also handle the message potentially returning null.
+    try {
+      files = await LegendInterface.pickMultipleFiles();
+    } on PlatformException {
+      files = null;
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _files = files;
     });
   }
 
@@ -85,11 +108,22 @@ class _MyAppState extends State<MyApp> {
                       pickFile(),
                     },
                 child: Text("pickFile")),
+            TextButton(
+                onPressed: () => {
+                      pickMultipleFiles(),
+                    },
+                child: Text("pickFile")),
             Center(
               child: Text('Running on: $_platformVersion\n'),
             ),
             Center(
-              child: Text('File: $_file\n'),
+              child: Text(_file?["name"] ?? "Nothing"),
+            ),
+            Center(
+              child: Text(_files?[0]["name"] ?? "Nothing"),
+            ),
+            Center(
+              child: Text(_files?[1]["name"] ?? "Nothing"),
             ),
           ],
         ),
